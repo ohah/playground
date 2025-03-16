@@ -1,8 +1,6 @@
-import React from 'react';
-
-import { Result } from './Result';
 import styled from '@emotion/styled';
 import MonacoEditor from './MonacoEditor';
+import { Result } from './Result';
 
 const Container = styled.div`
   display: flex;

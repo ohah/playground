@@ -1,7 +1,10 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false, "ignore": ["public/react/*"] },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": ["public/react/*", "node_modules/*"]
+  },
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
@@ -50,6 +53,7 @@
         "noUnusedLabels": "error",
         "noUnusedPrivateClassMembers": "error",
         "noUnusedVariables": "error",
+        "noUnusedImports": "off",
         "useArrayLiterals": "off",
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
@@ -115,7 +119,7 @@
       "semicolons": "always",
       "arrowParentheses": "asNeeded",
       "bracketSameLine": false,
-      "lineWidth": 120,
+      "lineWidth": 80,
       "quoteStyle": "single",
       "attributePosition": "auto",
       "bracketSpacing": true

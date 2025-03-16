@@ -3,6 +3,8 @@ import { create } from 'zustand';
 export interface FileData {
   content: string; // 파일 내용
   isModified: boolean; // 수정 여부
+  dts?: string;
+  isShow?: boolean; // 수정 여부
   type?: string; // 파일 타입 (예: "typescript", "javascript")
 }
 
@@ -17,12 +19,28 @@ const initialFiles = new Map<string, FileData>();
 initialFiles.set('main.tsx', {
   content: `import React from 'react';
 import ReactDOM from 'react-dom';
-
-const App = () => <h1>Hello, Wasdfasdforld!</h1>;
+import App from './App';
 
 ReactDOM.render(<App />, document.getElementById('root'));`,
   isModified: false,
   type: 'typescript',
+  isShow: false,
+});
+
+initialFiles.set('App.tsx', {
+  content: `import React from 'react';
+import ReactDOM from 'react-dom';
+
+const App = () => {
+  return (
+    <div> Hello World! </div>
+  )
+};
+
+export default App;`,
+  isModified: false,
+  type: 'typescript',
+  isShow: false,
 });
 
 initialFiles.set('foo.ts', {
@@ -46,7 +64,9 @@ export const useFileStore = create<EditorState>(set => ({
   updateFile: ({ id, content }) =>
     set(state => {
       const file = state.files.get(id);
-      if (!file) return state; // 파일이 없으면 변경하지 않음
+      if (!file) {
+        return state;
+      }
       const updatedFile = { ...file, content, isModified: true };
       const newFiles = new Map(state.files).set(id, updatedFile);
       return { files: newFiles };
