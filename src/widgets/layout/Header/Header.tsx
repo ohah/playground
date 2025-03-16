@@ -9,9 +9,5 @@ const HeaderContainer = styled.header`
 `;
 
 export const Header = () => {
-  return (
-    <HeaderContainer>
-      PlayGround
-    </HeaderContainer>
-  );
+  return <HeaderContainer>PlayGround</HeaderContainer>;
 };

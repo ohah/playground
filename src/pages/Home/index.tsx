@@ -1,13 +1,8 @@
-import { PlayGround } from "@/features";
-import { Header } from "@/widgets";
-import styled from "@emotion/styled";
+import { PlayGround } from '@/features';
+import { Header } from '@/widgets';
+import styled from '@emotion/styled';
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-`;
-const EditorContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
