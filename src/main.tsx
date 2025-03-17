@@ -19,7 +19,8 @@ try {
 }
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
+  <>
+    {/* <React.StrictMode> */}
     <Global
       styles={css`
         ${emotionReset}
@@ -37,5 +38,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
         <Route path='/App' element={<App />} />
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>,
+    {/* </React.StrictMode> */}
+  </>,
 );
