@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import styled from '@emotion/styled';
 import { Editor, Monaco, loader, useMonaco } from '@monaco-editor/react';
@@ -14,15 +14,6 @@ import { type editor } from 'monaco-editor';
 const TabList = styled(Tabs.List)`
   display: flex;
   border-bottom: 1px solid #ccc;
-`;
-
-// const Editor = styled.div`
-//   height: 90vh;
-// `;
-
-const TabContent = styled(Tabs.Content)`
-  padding: 20px;
-  background-color: #fff;
 `;
 
 const TabTrigger = styled(Tabs.Trigger)`
@@ -47,38 +38,14 @@ loader.config({
 // TODO: 작업중.
 const MonacoEditor = () => {
   const { files, updateFile } = useFileStore();
-  const editorRefs = useRef<Map<string, editor.IStandaloneCodeEditor>>(
-    new Map(),
-  );
+
+  const [file, setFile] = useState<string>('main.tsx');
+
   const monacoRef = useRef<Monaco>(null);
-  const codeEditor = useRef<editor.IStandaloneCodeEditor[]>([]);
 
   const handleEditorChange = (value: string | undefined) => {
-    if (monacoRef.current) {
-      const model = monacoRef.current.editor.getModel(
-        monacoRef.current.Uri.parse(`file:///${value}`),
-      );
-      console.log('value', value);
-      monacoRef.current.editor.setModelMarkers;
-      const editors = monacoRef.current.editor.getEditors();
-      editors.forEach(editor => {
-        if (editor.getModel()?.uri.toString() === `file:///${value}`) {
-          if (editor && model) {
-            editor.setModel(null);
-            if (model) {
-              console.log('model.getValue()', model.getValue());
-              // model.setValue(model.getValue());
-              // editor.setValue(value?.toString() || '');
-            }
-          }
-        }
-      });
-
-      // console.log('model.getValue()', model?.getValue());
-      // if (model) {
-      //   model.setValue(model.getValue());
-      //   model.f
-      // }
+    if (value !== undefined) {
+      updateFile({ id: file, content: value });
     }
   };
 
@@ -86,7 +53,7 @@ const MonacoEditor = () => {
     if (monacoRef.current) {
       try {
         const unformatted = monacoRef.current?.editor
-          ?.getModel(monacoRef?.current?.Uri.parse(`file:///main.tsx`))
+          ?.getModel(monacoRef?.current?.Uri.parse(`main.tsx`))
           ?.getValue();
         if (unformatted) {
           console.log('unformatted', unformatted.toString());
@@ -111,15 +78,11 @@ const MonacoEditor = () => {
     }
   };
 
-  const onMount = (
-    editor: editor.IStandaloneCodeEditor,
-    monaco: Monaco,
-    filename: string,
-  ) => {
-    monaco?.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-      noSemanticValidation: true,
-      noSyntaxValidation: false,
-    });
+  const onMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
+    // monaco?.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+    //   noSemanticValidation: true,
+    //   noSyntaxValidation: false,
+    // });
     monaco?.languages.typescript.javascriptDefaults.setCompilerOptions({
       target: monaco.languages.typescript.ScriptTarget.ES2015,
       allowNonTsExtensions: true,
@@ -127,29 +90,29 @@ const MonacoEditor = () => {
       moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs, // 모듈 해석 설정
     });
 
-    useFileStore.getState().files.forEach((file, key) => {
-      const model = monaco?.editor.getModel(monaco.Uri.parse(`file:///${key}`));
-      if (!model) {
-        const newModel = monaco?.editor.createModel(
-          file.content,
-          'typescript',
-          monaco.Uri.parse(`file:///${key}`),
-        );
-        if (filename === key) {
-          editor.setModel(newModel);
-        }
-      } else {
-        if (filename === key) {
-          editor.setModel(model);
-        }
-      }
-    });
+    // useFileStore.getState().files.forEach((file, key) => {
+    //   const model = monaco?.editor.getModel(monaco.Uri.parse(`${key}`));
+    //   if (!model) {
+    //     const newModel = monaco?.editor.createModel(
+    //       file.content,
+    //       'typescript',
+    //       monaco.Uri.parse(`${key}`),
+    //     );
+    //     if (filename === key) {
+    //       editor.setModel(newModel);
+    //     }
+    //   } else {
+    //     if (filename === key) {
+    //       editor.setModel(model);
+    //     }
+    //   }
+    // });
 
-    editorRefs.current.set(filename, editor);
+    // editorRefs.current.set(filename, editor);
   };
 
   return (
-    <Tabs.Root defaultValue='main.tsx' onValueChange={handleEditorChange}>
+    <Tabs.Root defaultValue='main.tsx' onValueChange={setFile}>
       <button onClick={onFormatClick}> asdf </button>
       <TabList>
         {files.size > 0 &&
@@ -159,21 +122,14 @@ const MonacoEditor = () => {
             </TabTrigger>
           ))}
       </TabList>
-      {files.size > 0 &&
-        Array.from(files.keys()).map(key => {
-          const { content, type } = files.get(key) || {};
-          return (
-            <TabContent key={key} value={key}>
-              <Editor
-                height='90vh'
-                defaultLanguage={type}
-                value={content}
-                onMount={(editor, monaco) => onMount(editor, monaco, key)}
-                // onChange={handleEditorChange}
-              />
-            </TabContent>
-          );
-        })}
+      <Editor
+        height='90vh'
+        path={file}
+        defaultLanguage={files.get(file)?.type}
+        defaultValue={files.get(file)?.content}
+        onMount={(editor, monaco) => onMount(editor, monaco)}
+        onChange={handleEditorChange}
+      />
     </Tabs.Root>
   );
 };
